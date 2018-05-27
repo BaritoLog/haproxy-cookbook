@@ -1,0 +1,15 @@
+HTTP/1.0 403 Forbidden
+Cache-Control: no-cache
+Connection: close
+Content-Type: application/json
+
+{
+  "errors": [
+    {
+      "code": "HTTP_403",
+      "message": "You are not allowed to access this record.",
+      "message_title": "403 Forbidden",
+      "message_severity": "error"
+    }
+  ]
+}

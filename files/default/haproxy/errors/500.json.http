@@ -1,0 +1,15 @@
+HTTP/1.0 500 Server Error
+Cache-Control: no-cache
+Connection: close
+Content-Type: application/json
+
+{
+  "errors": [
+    {
+      "code": "HTTP_500",
+      "message": "The server encountered an internal error and was unable to complete your request. Please contact the server administrator.",
+      "message_title": "500 Server Error",
+      "message_severity": "error"
+    }
+  ]
+}

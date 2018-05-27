@@ -1,0 +1,15 @@
+HTTP/1.0 400 Bad request
+Cache-Control: no-cache
+Connection: close
+Content-Type: application/json
+
+{
+  "errors": [
+    {
+      "code": "HTTP_400",
+      "message": "The request could not be understood by the server due to malformed syntax. You should modify the request before retrying.",
+      "message_title": "400 Bad request",
+      "message_severity": "error"
+    }
+  ]
+}

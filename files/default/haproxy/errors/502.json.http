@@ -1,0 +1,15 @@
+HTTP/1.0 502 Bad Gateway
+Cache-Control: no-cache
+Connection: close
+Content-Type: application/json
+
+{
+  "errors": [
+    {
+      "code": "HTTP_502",
+      "message": "The server encountered a temporary error and could not complete your request. Please try again later.",
+      "message_title": "502 Bad Gateway",
+      "message_severity": "error"
+    }
+  ]
+}

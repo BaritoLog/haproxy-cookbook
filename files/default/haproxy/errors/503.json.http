@@ -1,0 +1,15 @@
+HTTP/1.0 503 Service Unavailable
+Cache-Control: no-cache
+Connection: close
+Content-Type: application/json
+
+{
+  "errors": [
+    {
+      "code": "HTTP_503",
+      "message": "The server encountered a temporary error and could not complete your request. Please try again later.",
+      "message_title": "Service Unavailable",
+      "message_severity": "error"
+    }
+  ]
+}
