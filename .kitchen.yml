@@ -18,8 +18,14 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[haproxy::default]
+      - recipe[haproxy::internal]
     verifier:
       inspec_tests:
         - test/integration/default
     attributes:
+      haproxy:
+        app_backends:
+          - host: 'test-1.com'
+            maxconn: 16
+          - host: 'test-2.com'
+            maxconn: 32
