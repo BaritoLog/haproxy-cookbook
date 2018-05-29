@@ -1,0 +1,15 @@
+/var/log/haproxy/*.log {
+    daily
+    missingok
+    rotate 3
+    size 500M
+    delaycompress
+    compress
+    copytruncate
+    notifempty
+    create 640 syslog syslog
+    sharedscripts
+    postrotate
+        service rsyslog restart > /dev/null
+    endscript
+}
