@@ -18,7 +18,6 @@ default[cookbook_name]['custom_frontend_configs'] = []
 default[cookbook_name]['app_backends']            = []
 
 default[cookbook_name]['app_port']                = 80
-default[cookbook_name]['health_port']             = 80
 default[cookbook_name]['custom_backend_config']   = ''
 default[cookbook_name]['ping_url']                = '/ping'
 default[cookbook_name]['status_bind_address']     = node['hostname']
