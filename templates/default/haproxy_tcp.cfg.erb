@@ -47,17 +47,21 @@ listen haproxy-status
   stats refresh 15s
   stats show-node
 
-frontend <%= @app_name %>-frontend
+frontend default-frontend
   bind *:80
   mode tcp
   maxconn <%= @frontend_maxconn %>
   option tcplog
-  default_backend <%= @app_name %>
+  <%= @custom_frontend_configs.join("\n  ") %>
+  default_backend <%= @default_backend %>
 
-backend <%= @app_name %>
+<% for backend in @backends %>
+backend <%= backend['name'] %>
   mode tcp
   option forceclose
   balance roundrobin
-  <% for app_backend in @app_backends  %>
-  server <%= app_backend['host'] %> <%= app_backend['host'] %>:<%= @app_port %> maxconn <%= app_backend['maxconn'] %> check port <%= @health_port %> inter 5000 fastinter 1000 fall 1 weight 1
+  <% for server in backend['servers']  %>
+  server <%= server['host'] %> <%= server['host'] %>:<%= backend['app_port'] %> maxconn <%= server['maxconn'] %> check port <%= backend['health_port'] %> inter 5000 fastinter 1000 fall 1 weight 1
   <% end %>
+
+<% end %>

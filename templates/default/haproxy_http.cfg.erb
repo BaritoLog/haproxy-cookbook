@@ -56,10 +56,10 @@ frontend incoming-http
   bind *:80
   redirect scheme https code 301 if !{ ssl_fc }
 
-frontend <%= @app_name %>-frontend
-  bind *:443 ssl crt <%= @cert_path %>
+frontend default-frontend
+  bind *:443 ssl <%= @cert_paths.map{|cert_path| 'crt ' + cert_path}.join(' ') %>
 <% else %>
-frontend <%= @app_name %>-frontend
+frontend default-frontend
   bind *:80
 <% end %>
   mode http
@@ -73,13 +73,14 @@ frontend <%= @app_name %>-frontend
   option httplog
   option http-server-close
   <%= @custom_frontend_configs.join("\n  ") %>
-  default_backend <%= @app_name %>
+  default_backend <%= @default_backend %>
 
-backend <%= @app_name %>
+<% for backend in @backends %>
+backend <%= backend['name'] %>
   mode http
   option httplog
-  <% if @ping_url != "" %>
-  option httpchk GET <%= @ping_url %> HTTP/1.1\r\nHost:\ localhost
+  <% if backend['ping_url'] != "" %>
+  option httpchk GET <%= backend['ping_url'] %> HTTP/1.1\r\nHost:\ localhost
   <% end %>
   compression algo gzip
   compression type text/css text/html text/javascript application/javascript text/plain text/xml application/json
@@ -89,6 +90,8 @@ backend <%= @app_name %>
   option forwardfor
   option forceclose
   balance roundrobin
-  <% for app_backend in @app_backends  %>
-  server <%= app_backend['host'] %> <%= app_backend['host'] %>:<%= @app_port %> maxconn <%= app_backend['maxconn'] %> check port <%= @health_port %> inter 5000 fastinter 1000 fall 1 weight 1 <%= @custom_backend_config || "" %>
+  <% for server in backend['servers']  %>
+  server <%= server['host'] %> <%= server['host'] %>:<%= backend['app_port'] %> maxconn <%= server['maxconn'] %> check port <%= backend['health_port'] %> inter 5000 fastinter 1000 fall 1 weight 1 <%= backend['custom_backend_config'] || "" %>
   <% end %>
+
+<% end %>

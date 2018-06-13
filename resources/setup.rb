@@ -1,21 +1,19 @@
 property :app_name,               String,   name_property: true
 property :haproxy_mode,           String,   required: true
 property :global_maxconn,         String,   required: true
-property :frontend_maxconn,       String,   required: true
-property :custom_frontend_configs,Array,    default: []
-property :app_backends,           Array,    default: []
-property :app_port,               Integer,  required: true
-property :health_port,            Integer
-property :custom_backend_config,  String,   default: ''
-property :ping_url,               String,   default: ''
 property :status_bind_address,    String,   default: node['hostname']
 property :require_ssl,            kind_of: [TrueClass, FalseClass], default: false
-property :domain,                 String
+property :domains,                Array,    default: []
+property :frontend_maxconn,       String,   required: true
+property :custom_frontend_configs,Array,    default: []
+property :default_backend,        String,   required: true
+property :backends,               Array,    default: []
 
 default_action :install
 
 action :install do
   action_package_install
+  action_configure_ssl if new_resource.require_ssl
   action_configure
   action_essentials
 end
@@ -38,37 +36,38 @@ action :package_install do
   package 'haproxy' do
     notifies :restart, "haproxy_setup[#{new_resource.app_name}]", :delayed
   end
-
-  if new_resource.require_ssl
-    action_configure_ssl
-  end
 end
 
 action :configure_ssl do
-  pem_file = "star#{new_resource.domain}.pem"
-  cert_path = "/etc/ssl/#{new_resource.domain}/#{pem_file}"
+  node.run_state[cookbook_name]['cert_paths'] = []
 
-  directory "/etc/ssl/#{new_resource.domain}/" do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    recursive true
-  end
+  new_resource.domains.each do |domain|
+    pem_file = "star#{domain}.pem"
+    cert_path = "/etc/ssl/#{domain}/#{pem_file}"
 
-  cookbook_file cert_path do
-    source "haproxy/#{pem_file}"
-    cookbook 'haproxy'
-    owner 'root'
-    group 'root'
-    mode '0644'
-    action :create
-    notifies :reload, "haproxy_setup[#{new_resource.app_name}]", :delayed
+    directory "/etc/ssl/#{domain}/" do
+      owner 'root'
+      group 'root'
+      mode '0755'
+      recursive true
+    end
+
+    cookbook_file cert_path do
+      source "haproxy/#{pem_file}"
+      cookbook 'haproxy'
+      owner 'root'
+      group 'root'
+      mode '0644'
+      action :create
+      notifies :reload, "haproxy_setup[#{new_resource.app_name}]", :delayed
+    end
+
+    node.run_state[cookbook_name]['cert_paths'] << cert_path
   end
 end
 
 action :configure do
-  pem_file = "star#{new_resource.domain}.pem"
-  cert_path = "/etc/ssl/#{new_resource.domain}/#{pem_file}"
+  cert_paths = (node.run_state.dig(cookbook_name, 'cert_paths') || [])
 
   template '/etc/haproxy/haproxy.cfg' do
     source "haproxy_#{new_resource.haproxy_mode}.cfg.erb"
@@ -77,16 +76,13 @@ action :configure do
     variables(
               app_name: new_resource.app_name,
               global_maxconn: new_resource.global_maxconn,
-              frontend_maxconn: new_resource.frontend_maxconn,
-              custom_frontend_configs: new_resource.custom_frontend_configs,
-              app_backends: new_resource.app_backends,
-              app_port: new_resource.app_port,
-              health_port: new_resource.health_port || new_resource.app_port,
-              custom_backend_config: new_resource.custom_backend_config,
-              ping_url: new_resource.ping_url,
               status_bind_address: new_resource.status_bind_address,
               require_ssl: new_resource.require_ssl,
-              cert_path: cert_path
+              cert_paths: cert_paths,
+              frontend_maxconn: new_resource.frontend_maxconn,
+              custom_frontend_configs: new_resource.custom_frontend_configs,
+              default_backend: new_resource.default_backend,
+              backends: new_resource.backends
     )
     notifies :reload, "haproxy_setup[#{new_resource.app_name}]", :delayed
   end
