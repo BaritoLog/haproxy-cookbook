@@ -39,6 +39,7 @@ action :package_install do
 end
 
 action :configure_ssl do
+  node.run_state[cookbook_name] ||= {}
   node.run_state[cookbook_name]['cert_paths'] = []
 
   new_resource.domains.each do |domain|
