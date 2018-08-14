@@ -70,6 +70,7 @@ action :configure do
   cert_paths = (node.run_state.dig(cookbook_name, 'cert_paths') || [])
 
   template '/etc/haproxy/haproxy.cfg' do
+    cookbook 'haproxy'
     source "haproxy_#{new_resource.haproxy_mode}.cfg.erb"
     owner 'root'
     group 'root'
@@ -90,6 +91,7 @@ end
 
 action :essentials do
   cookbook_file '/etc/rsyslog.d/49-haproxy.conf' do
+    cookbook 'haproxy'
     source 'haproxy/49-haproxy.conf'
     owner 'root'
     group 'root'
@@ -99,6 +101,7 @@ action :essentials do
   end
 
   template '/etc/logrotate.d/haproxy' do
+    cookbook 'haproxy'
     source 'logrotate/haproxy-splitted.erb'
     owner 'root'
     group 'root'
@@ -111,6 +114,7 @@ action :essentials do
   end
 
   remote_directory '/etc/haproxy/errors' do
+    cookbook 'haproxy'
     source 'haproxy/errors'
     owner 'root'
     group 'root'
