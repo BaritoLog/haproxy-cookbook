@@ -55,7 +55,6 @@ action :configure_ssl do
 
     cookbook_file cert_path do
       source "haproxy/#{pem_file}"
-      cookbook 'haproxy'
       owner 'root'
       group 'root'
       mode '0644'
@@ -92,7 +91,6 @@ end
 action :essentials do
   cookbook_file '/etc/rsyslog.d/49-haproxy.conf' do
     source 'haproxy/49-haproxy.conf'
-    cookbook 'haproxy'
     owner 'root'
     group 'root'
     mode '0644'
@@ -102,7 +100,6 @@ action :essentials do
 
   template '/etc/logrotate.d/haproxy' do
     source 'logrotate/haproxy-splitted.erb'
-    cookbook 'haproxy'
     owner 'root'
     group 'root'
     mode '0644'
