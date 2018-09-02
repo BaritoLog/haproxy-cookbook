@@ -21,12 +21,6 @@ end
 action :package_install do
   case node['platform_family']
   when 'debian'
-    apt_repository 'haproxy' do
-      uri 'ppa:vbernat/haproxy-1.6'
-      distribution node['lsb']['codename']
-      notifies :run, 'execute[apt-get update]', :immediately
-    end
-
     execute 'apt-get update' do
       command 'apt-get update -y'
       action :nothing
@@ -34,6 +28,7 @@ action :package_install do
   end
 
   package 'haproxy' do
+    version '1.8.*'
     notifies :restart, "haproxy_setup[#{new_resource.app_name}]", :delayed
   end
 end

@@ -5,11 +5,6 @@
 # The Inspec reference, with examples and extensive documentation, can be
 # found at http://inspec.io/docs/reference/resources/
 
-describe apt('ppa:vbernat/haproxy-1.6') do
-  it { should exist }
-  it { should be_enabled }
-end
-
 describe package('haproxy') do
   it { should be_installed }
 end

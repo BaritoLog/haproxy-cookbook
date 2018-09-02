@@ -13,7 +13,12 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-16.04
+  - name: opscode-ubuntu-18.04-chef-14
+    driver:
+      box: bento/ubuntu-18.04
+    provisioner:
+      product_name: chef
+      product_version: latest
 
 suites:
   - name: default
@@ -24,8 +29,15 @@ suites:
         - test/integration/default
     attributes:
       haproxy:
-        app_backends:
-          - host: 'test-1.com'
-            maxconn: 16
-          - host: 'test-2.com'
-            maxconn: 32
+        mode: 'http'
+        default_backend: 'default'
+        backends:
+          - name: 'default'
+            servers:
+            - host: 'test-1.com'
+              maxconn: 16
+            - host: 'test-2.com'
+              maxconn: 32
+            app_port: 8080
+            health_port: 8080
+            ping_url: ''
