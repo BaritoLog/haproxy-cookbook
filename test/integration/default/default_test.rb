@@ -21,6 +21,7 @@ end
 
 describe file('/etc/haproxy/haproxy.cfg') do
   its('mode') { should cmp '0644' }
+  its('content') { should match /nbproc 1/ }
 end
 
 describe file('/etc/rsyslog.d/49-haproxy.conf') do

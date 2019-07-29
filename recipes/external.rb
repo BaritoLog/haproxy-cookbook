@@ -9,6 +9,9 @@
 haproxy_setup node[cookbook_name]['app_name'] do
   haproxy_mode            node[cookbook_name]['mode']
   global_maxconn          node[cookbook_name]['global_maxconn']
+  global_nbproc           node[cookbook_name]['global_nbproc']
+  global_nbthread         node[cookbook_name]['global_nbthread']
+  global_cpu_map          node[cookbook_name]['global_cpu_map']
   status_bind_address     node[cookbook_name]['status_bind_address']
   require_ssl             node[cookbook_name]['require_ssl']
   domains                 node[cookbook_name]['domains']
