@@ -11,6 +11,9 @@ cookbook_name = 'haproxy'
 default[cookbook_name]['app_name']                = 'default'
 default[cookbook_name]['mode']                    = 'http'
 default[cookbook_name]['global_maxconn']          = '10000'
+default[cookbook_name]['global_nbproc']           = '1'
+default[cookbook_name]['global_nbthread']         = '4'
+default[cookbook_name]['global_cpu_map']          = 'auto:1/1-4 0-3'
 default[cookbook_name]['status_bind_address']     = node['hostname']
 
 # Frontend configurations

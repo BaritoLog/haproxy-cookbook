@@ -8,6 +8,9 @@ property :frontend_maxconn,       String,   required: true
 property :custom_frontend_configs,Array,    default: []
 property :default_backend,        String,   required: true
 property :backends,               Array,    default: []
+property :global_nbproc,          String,   required: true
+property :global_nbthread,        String,   required: true
+property :global_cpu_map,         String,   required: true
 
 default_action :install
 
@@ -72,6 +75,9 @@ action :configure do
     variables(
               app_name: new_resource.app_name,
               global_maxconn: new_resource.global_maxconn,
+              global_nbproc: new_resource.global_nbproc,
+              global_nbthread: new_resource.global_nbthread,
+              global_cpu_map: new_resource.global_cpu_map,
               status_bind_address: new_resource.status_bind_address,
               require_ssl: new_resource.require_ssl,
               cert_paths: cert_paths,

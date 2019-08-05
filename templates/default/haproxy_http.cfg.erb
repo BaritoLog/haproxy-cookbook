@@ -1,4 +1,7 @@
 global
+  nbproc <%= @global_nbproc %>
+  nbthread <%= @global_nbthread %>
+  cpu-map <%= @global_cpu_map %>
   log /dev/log local0
   log /dev/log local1 notice
   chroot /var/lib/haproxy
